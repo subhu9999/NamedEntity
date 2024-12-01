@@ -3,9 +3,33 @@ import pdfplumber
 import pytesseract
 from PIL import Image
 import spacy
+import subprocess
+import sys
+
+def install_model():
+    """Function to install en_core_web_trf model if not already installed."""
+    try:
+        # Try loading the model to check if it's already installed
+        spacy.load("en_core_web_trf")
+        print("Model is already installed.")
+    except OSError:
+        # If not installed, install the model
+        print("Model not found. Installing en_core_web_trf...")
+        subprocess.check_call([sys.executable, "-m", "spacy", "download", "en_core_web_trf"])
+
+
+# Function to load the model
+def load_model():
+    """Load the transformer-based model"""
+    install_model()
+    nlp = spacy.load("en_core_web_trf")
+    return nlp
+
 
 # Load SpaCy model
-nlp = spacy.load("en_core_web_trf")
+#nlp = spacy.load("en_core_web_trf")
+
+nlp = load_model()
 
 # Title and description
 st.title("Named Entity Recognization")
@@ -75,5 +99,5 @@ if uploaded_file is not None:
         st.success("No company names detected.")
 
     # Display extracted text
-    st.subheader("Extracted Text")
-    st.text_area("Document Text", extracted_text, height=300)
+    # st.subheader("Extracted Text")
+    # st.text_area("Document Text", extracted_text, height=300)
